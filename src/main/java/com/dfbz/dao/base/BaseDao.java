@@ -20,7 +20,6 @@ public class BaseDao<T> {
     public void delById(Integer id, Class<T> tClass) {
         MyAnnotation annotation = tClass.getAnnotation(MyAnnotation.class);
         String tableName = annotation.value();
-        String name = tClass.getName();
         QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
         try {
             runner.update("delete from " + tableName + " where id = ?", id);
@@ -101,7 +100,7 @@ public class BaseDao<T> {
             statement = connection.prepareStatement(query.toString());
             System.out.println(query.toString());
             results = statement.executeQuery();
-            List<T> list = new ArrayList<T>();
+            List<T> list = new ArrayList<>();
             while (results.next()) {
                 T obj = tClass.newInstance();
                 Field[] args = tClass.getDeclaredFields();
@@ -121,7 +120,7 @@ public class BaseDao<T> {
         Class<?> tClass = obj.getClass();
         MyAnnotation annotation = tClass.getAnnotation(MyAnnotation.class);
         String tableName = annotation.value();
-        QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
+//        QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
         StringBuilder query = new StringBuilder("insert into " + tableName + " values(");
         Connection connection = null;
         PreparedStatement statement = null;
@@ -150,8 +149,8 @@ public class BaseDao<T> {
 
         } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-//        } finally {
-//            JDBCUtil.close(null, statement, connection);
+        } finally {
+            JDBCUtil.close(null, statement, connection);
         }
     }
 
@@ -173,6 +172,8 @@ public class BaseDao<T> {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            JDBCUtil.close(null, statement, connection);
         }
     }
 
@@ -204,10 +205,7 @@ public class BaseDao<T> {
 
         System.out.println(list);
         System.out.println(t);
-        if (list.contains(t))
-            return true;
-        else
-            return false;
+        return list.contains(t);
     }
 
     private void getField(Class<?> tClass, ResultSet results, Object o, Field[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, SQLException {

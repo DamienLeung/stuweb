@@ -1,6 +1,5 @@
 package com.dfbz.service.impl;
 
-import com.dfbz.dao.UserDao;
 import com.dfbz.dao.impl.UserDaoImpl;
 import com.dfbz.pojo.User;
 import com.dfbz.service.UserService;

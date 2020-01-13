@@ -1,4 +1,4 @@
-package com.dfbz.dao.impl;
+package com.dfbz.dao.base;
 
 import com.dfbz.annotation.MyAnnotation;
 import com.dfbz.pojo.User;
@@ -219,5 +219,4 @@ public class BaseDao<T> {
             method.invoke(o, results.getObject(col));
         }
     }
-}
 }

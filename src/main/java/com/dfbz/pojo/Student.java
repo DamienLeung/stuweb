@@ -1,5 +1,8 @@
 package com.dfbz.pojo;
 
+import com.dfbz.annotation.MyAnnotation;
+
+@MyAnnotation("stus")
 public class Student {
     private Integer id;
     private String studentN;

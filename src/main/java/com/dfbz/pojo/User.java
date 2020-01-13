@@ -1,5 +1,10 @@
 package com.dfbz.pojo;
 
+import com.dfbz.annotation.MyAnnotation;
+
+import java.lang.annotation.Retention;
+
+@MyAnnotation("user")
 public class User {
     private String username;
     private String password;

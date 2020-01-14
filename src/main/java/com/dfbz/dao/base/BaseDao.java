@@ -3,6 +3,8 @@ package com.dfbz.dao.base;
 import com.dfbz.annotation.MyAnnotation;
 import com.dfbz.util.JDBCUtil;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,23 +27,9 @@ public class BaseDao<T> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        /*StringBuilder query = new StringBuilder("delete from " + tableName + " where id = ?");
-        Connection connection = null;
-        PreparedStatement statement = null;
-        try {
-            connection = JDBCUtil.getConnection();
-            statement = connection.prepareStatement(query.toString());
-            statement.setInt(1, id);
-            System.out.println(query);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            JDBCUtil.close(null, statement, connection);
-        }*/
     }
 
-    public void save(Object obj) {
+    public void save(T obj) {
         Class<?> tClass = obj.getClass();
         MyAnnotation annotation = tClass.getAnnotation(MyAnnotation.class);
         String tableName = annotation.value();
@@ -77,40 +65,11 @@ public class BaseDao<T> {
         MyAnnotation annotation = tClass.getAnnotation(MyAnnotation.class);
         String tableName = annotation.value();
         QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
-        StringBuilder query = new StringBuilder("select * from " + tableName + " order by id");
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet results = null;
         try {
-            /*List<Object[]> results = runner.query(query.toString(), new ArrayListHandler(), tableName);
-            List<T> list = new ArrayList<T>();
-            for (Object[] stu : results) {
-                T obj = tClass.newInstance();
-                Field[] args = tClass.getDeclaredFields();
-                for (int i = 0; i < args.length; i ++) {
-                    String col = args[i].getName();
-                    String methodN = "set" + col.substring(0,1).toUpperCase() + col.substring(1);
-                    Method method = tClass.getMethod(methodN, args[i].getType());
-                    method.invoke(obj, stu[i]);
-                }
-            }*/
-            connection = JDBCUtil.getConnection();
-            statement = connection.prepareStatement(query.toString());
-            System.out.println(query.toString());
-            results = statement.executeQuery();
-            List<T> list = new ArrayList<>();
-            while (results.next()) {
-                T obj = tClass.newInstance();
-                Field[] args = tClass.getDeclaredFields();
-                getField(tClass, results, obj, args);
-                list.add(obj);
-            }
-            return list;
-        } catch (SQLException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            ResultSetHandler<List<T>> h = new BeanListHandler<>(tClass);
+            return runner.query("select * from " + tableName, h);
+        } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            JDBCUtil.close(results, statement, connection);
         }
         return null;
     }
@@ -119,37 +78,21 @@ public class BaseDao<T> {
         Class<?> tClass = obj.getClass();
         MyAnnotation annotation = tClass.getAnnotation(MyAnnotation.class);
         String tableName = annotation.value();
-//        QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
-        StringBuilder query = new StringBuilder("insert into " + tableName + " values(");
-        Connection connection = null;
-        PreparedStatement statement = null;
+        QueryRunner runner = new QueryRunner(JDBCUtil.getDataSource());
         try {
-            connection = JDBCUtil.getConnection();
-            statement = connection.prepareStatement(query.toString());
-
+            ArrayList<String> strings = new ArrayList<>();
             Field[] args = obj.getClass().getDeclaredFields();
             for (Field arg :
                     args) {
                 String col = arg.getName();
                 String methodN = "get" + col.substring(0, 1).toUpperCase() + col.substring(1);
                 Method method = obj.getClass().getDeclaredMethod(methodN);
-                Object result = method.invoke(obj);
-                if (result != null)
-                    query.append("\" ").append(result.toString()).append("\",");
-                else
-                    query.append("null, ");
+                strings.add(method.invoke(obj).toString());
             }
-            query.delete(query.lastIndexOf(","), query.length());
-            query.append(")");
-            connection = JDBCUtil.getConnection();
-            statement = connection.prepareStatement(query.toString());
-            System.out.println(query.toString());
-            statement.execute();
+            runner.update("insert into " + tableName + " values(?,?,?,?)", strings.toArray());
 
         } catch (SQLException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-        } finally {
-            JDBCUtil.close(null, statement, connection);
         }
     }
 

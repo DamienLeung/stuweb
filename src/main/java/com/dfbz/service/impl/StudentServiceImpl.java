@@ -1,6 +1,6 @@
 package com.dfbz.service.impl;
 
-import com.dfbz.dao.impl.StudentDaoImpl;
+import com.dfbz.dao.StudentDao;
 import com.dfbz.pojo.Student;
 import com.dfbz.service.StudentService;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class StudentServiceImpl implements StudentService {
 
-    private StudentDao dao = new StudentDaoImpl();
+    private StudentDao dao = new StudentDao();
 
     @Override
     public void save(Student student) {

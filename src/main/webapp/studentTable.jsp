@@ -46,6 +46,7 @@
 <%
     StudentService service = new StudentServiceImpl();
     List<Student> list = service.getListById();
+    pageContext.setAttribute("stuList", list);
 %>
 <div class="container">
     <p class="h1">學生信息</p>
@@ -60,7 +61,7 @@
                 <td>操作</td>
             </tr>
 
-            <c:forEach items="<%=list%>" var="student">
+            <c:forEach items="${pageScope.stuList}" var="student">
                 <tr>
                     <td><input type="checkbox" class="select" name="id" value="${student.id}"></td>
                     <td>${student.id}</td>
@@ -69,7 +70,6 @@
                     <td>${student.addr}</td>
                     <td><input type="button" class="btn btn-primary update" value="複製">
                         <input type="button" class="btn btn-danger delete" value="刪除"></td>
-
                 </tr>
             </c:forEach>
 
@@ -89,7 +89,7 @@
             <input class="btn btn-primary" type="submit" id="update" value="提交" disabled>
         </div>
     </form>
-    <lable class="info h4">請按格式輸入學號（第一位數字不能爲0）！</lable>
+    <label class="info h4">請按格式輸入學號（第一位數字不能爲0）！</label>
     <label class="info2 h4">請輸入正確的電話號碼格式！</label>
     <br>
 

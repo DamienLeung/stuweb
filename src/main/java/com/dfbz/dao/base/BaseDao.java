@@ -1,7 +1,6 @@
 package com.dfbz.dao.base;
 
 import com.dfbz.annotation.MyAnnotation;
-import com.dfbz.pojo.User;
 import com.dfbz.util.JDBCUtil;
 import org.apache.commons.dbutils.QueryRunner;
 

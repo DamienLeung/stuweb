@@ -5,7 +5,7 @@
   Time: 16:23
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Login Error</title>
@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="container">
-    <p class="h1">${msg}</p>
+    <p class="h1">${sessionScope.msg}</p>
     <a href="index.jsp">返回</a>
 </div>
 </body>

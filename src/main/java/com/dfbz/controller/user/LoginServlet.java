@@ -19,12 +19,14 @@ public class LoginServlet extends BaseServlet {
     public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String username = req.getParameter("username");
         String psw = req.getParameter("psw");
+
         System.out.println(username);
         System.out.println(psw);
         String path = req.getContextPath();
         boolean b = userService.validateUser(new User(username, psw));
         String msg;
         if (b) {
+            req.getSession().setAttribute("name", username);
             resp.setCharacterEncoding("UTF-8");
             resp.sendRedirect(path + "/studentTable.jsp");
 

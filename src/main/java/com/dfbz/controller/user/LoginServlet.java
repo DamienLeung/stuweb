@@ -5,7 +5,6 @@ import com.dfbz.pojo.User;
 import com.dfbz.service.UserService;
 import com.dfbz.service.impl.UserServiceImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +13,7 @@ import java.io.IOException;
 @WebServlet("/user/*")
 public class LoginServlet extends BaseServlet {
 
+    private final static int EXPIRED_TIME = 60 * 60 * 2;
     private UserService userService = new UserServiceImpl();
 
     public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -27,6 +27,7 @@ public class LoginServlet extends BaseServlet {
         String msg;
         if (b) {
             req.getSession().setAttribute("name", username);
+            req.getSession().setMaxInactiveInterval(EXPIRED_TIME);
             resp.setCharacterEncoding("UTF-8");
             resp.sendRedirect(path + "/studentTable.jsp");
 

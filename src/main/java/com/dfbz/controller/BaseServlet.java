@@ -25,7 +25,8 @@ public class BaseServlet extends HttpServlet {
             Class<?> aClass = Class.forName(className);
             Method method = aClass.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
             method.invoke(this, req, resp);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
